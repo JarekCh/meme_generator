@@ -26,14 +26,12 @@ function Meme() {
 
     function changeHandle(e) {
         const { name, value } = e.target;
-        setMeme( (prevState) => {
-            return {
-                ...prevState,
-                [name]: value
-            }
-        })
+        setMeme(prevMeme => ({
+            ...prevMeme,
+            [name]: value
+        }))
     }
-
+    
     function handleSubmit(e) {
         e.preventDefault()
         // submitToApi(formData)
