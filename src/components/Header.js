@@ -7,6 +7,7 @@ function Header() {
         <img 
             src={trollFace}
             className="header--image"
+            alt='logo'
         />
         <h2 className="header--title">Meme Generator</h2>
         <h4 className="header--project">React - Project</h4>
