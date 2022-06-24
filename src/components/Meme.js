@@ -1,47 +1,55 @@
-import { type } from '@testing-library/user-event/dist/type';
-import React, {useState} from 'react';
-import memesData from '../memesData.js';
+import React, {useState, useEffect } from 'react';
 
 
-function Meme() {
+
+function Meme() {    
     const [meme, setMeme] = useState({
         topText: '',
         bottomText: '',
         randomImage: 'http://i.imgflip.com/1bij.jpg'
     });
     
-    const [allMemeImages, setAllMemeImages] = useState(memesData);    
+    const [allMemes, setAllMemes] = useState([]);    
+
+    useEffect(() => {
+        fetch('https://api.imgflip.com/get_memes')
+            .then(res => res.json())
+            .then(data => setAllMemes(data.data.memes))
+            .catch(error => console.log(error))
+    }, []);    
     
-    function getMeme() {
-        const memesArray = allMemeImages.data.memes
-        const randomNumber = Math.floor(Math.random() * memesArray.length)
-        const reandomMemeImg = memesArray[randomNumber].url;        
+    // await alternative
+    // ----------------------
+    // useEffect(() => {
+    //     async function getMemes() {
+    //         const res = await fetch("https://api.imgflip.com/get_memes")
+    //         const data = await res.json()
+    //         setAllMemes(data.data.memes)
+    //     }
+    //     getMemes()
+    // }, [])
+    
+    function getMeme() {        
+        const randomNumber = Math.floor(Math.random() * allMemes.length);
+        const url = allMemes[randomNumber].url    
         setMeme(prevState => {
             return {
                 ...prevState,
-                randomImage: reandomMemeImg,
+                randomImage: url,
             }
         })        
     }
-
     function changeHandle(e) {
         const { name, value } = e.target;
         setMeme(prevMeme => ({
             ...prevMeme,
             [name]: value
         }))
-    }
-    
-    function handleSubmit(e) {
-        e.preventDefault()
-        // submitToApi(formData)
-        console.log(meme)
-    }
-    
+    }    
 
     return (    
         <main>
-            <form className="form" onSubmit={handleSubmit}>
+            <div className="form">
                 <input 
                     type="text"
                     placeholder="Top text"
@@ -62,7 +70,7 @@ function Meme() {
                 >
                     Get a new meme image 🖼
                 </button>
-            </form>      
+            </div>      
             <div className='meme'>    
                 {meme.randomImage && <img src={meme.randomImage} alt="meme image" className="meme--image" />}  
                 <h2 className="meme--text top">{meme.topText}</h2>
